@@ -1,0 +1,26 @@
+node{
+def mavenHome = tool name:"maven 3.8.4"
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+stage('CheckoutCode')
+{
+  git branch: 'development', credentialsId: 'c721a30f-cb00-439e-a13e-ac6c6f473a7b', url: 'https://github.com/kiranbelchada/maven-web-application.git'
+}
+stage('Build')
+{
+  sh "${mavenHome}/bin/mvn clean package"
+}
+/*stage('ExecuteSonarQubeReport')
+{
+ sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+stage('UploadArticatsIntoNexus')
+{
+ sh "${mavenHome}/bin/mvn deploy"
+}
+stage('DeployAppIntoTomcatServer')
+{
+sshagent(['1296951c-e840-4889-bf61-3a8d53609b5d']) {
+sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@172.31.47.209:/opt/apache-tomcat-9.0.63/webapps"
+}
+}*/
+}
