@@ -1,4 +1,4 @@
-node{
+node('nodes'){
 echo "Job name is: {$JOB_NAME}"
 echo "Node name is: {$NODE_NAME}"
 echo "Build number is: {$BUILD_NUMBER}"
