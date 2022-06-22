@@ -40,7 +40,7 @@ sendSlackNotifications(currentBuild.result)
 }
 }//node closing
 //below script is to send slack notification
-def sendSlackNotifications(String buildStatus = 'STARTED') {
+/*def sendSlackNotifications(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
 
@@ -64,4 +64,4 @@ def sendSlackNotifications(String buildStatus = 'STARTED') {
 
   // Send notifications
   slackSend (color: colorCode, message: summary, channel: 'walmart')
-}
+}*/
