@@ -4,6 +4,10 @@ properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKe
 timestamps {
  //block
 }
+echo "job name is: ${env.JOB_NAME}
+  echo "node name is: ${env.NODE_NAME}
+  echo "build number is: ${env.BUILD_NUMBER}
+
  stage('checkoutCode')
   {
     git branch: 'development', credentialsId: 'a7b4fdd4-711b-4457-af87-17e102cfed39', url: 'https://github.com/kiranbelchada/maven-web-application.git'
