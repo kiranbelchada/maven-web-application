@@ -25,7 +25,6 @@ def sendSlackNotification(String buildStatus = 'STARTED') {
   slackSend (color: colorCode, message: summary)
 
 node {
-try{
 def mavenHome = tool name: "maven 3.8.6"
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), pipelineTriggers([pollSCM('* * * * *')])])
 
@@ -35,6 +34,7 @@ timestamps {
 echo "job name is: ${env.JOB_NAME}"
   echo "node name is: ${env.NODE_NAME}"
   echo "build number is: ${env.BUILD_NUMBER}"
+  try{
  stage('checkoutCode')
   {
     git branch: 'development', credentialsId: 'a7b4fdd4-711b-4457-af87-17e102cfed39', url: 'https://github.com/kiranbelchada/maven-web-application.git'
@@ -57,7 +57,7 @@ echo "job name is: ${env.JOB_NAME}"
      sh "scp -o  StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.126.26.138:/opt/tomcat9/webapps"
 	 }
 }
- } catch (e) {
+ } catch(e) {
     currentBuild.result = "FAILED"
     throw e
     } finally {
