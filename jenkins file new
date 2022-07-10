@@ -63,6 +63,6 @@ echo "job name is: ${env.JOB_NAME}"
   }
 
   // Send notifications
-  slackSend (color: colorCode, message: summary)
+  slackSend (color: colorCode, message: summary,channel: 'walmart')
 
   }
