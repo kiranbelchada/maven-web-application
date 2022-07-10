@@ -57,7 +57,7 @@ try{
      sh "scp -o  StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.126.26.138:/opt/tomcat9/webapps"
 	 }
 }
- catch (e) {
+ }catch (e) {
     currentBuild.result = "FAILED"
     throw e
     } finally {
