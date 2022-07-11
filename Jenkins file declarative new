@@ -1,0 +1,80 @@
+
+
+pipeline
+{
+ agent any
+ tools{
+    maven "maven 3.8.6"
+ }
+ triggers {
+  pollSCM '* * * * *'
+}
+options {
+  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+  timestamps()
+}
+  stages{
+    stage('checkoutCode'){
+	  steps{
+	     git branch: 'development', credentialsId: 'a7b4fdd4-711b-4457-af87-17e102cfed39', url: 'https://github.com/kiranbelchada/maven-web-application.git'
+		 }
+		}
+	stage('Build'){
+	  steps{
+	      sh "mvn clean package"
+		 }
+		}
+	/*stage('ExecuteSonarQubeReport'){
+	  steps{
+	     sh "mvn sonar:sonar"
+		}
+	  }
+	 stage('UploadArtifactsIntoNexus'){
+	  steps{
+	     sh "mvn deploy"
+		 }
+		}
+		 stage('DeployAppIntoTomcatServer'){
+	  steps{
+	   sshagent(['d3d7d19d-4c47-45dc-9e02-0753f65563fe']) {
+     sh "scp -o  StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.235.67.162/:/opt/tomcat9/webapps"
+         }
+		}
+	}*/
+
+	}
+		post {
+  success {
+  sendSlackNotification('SUCCESSFUL')
+  }
+  failure {
+  sendSlackNotification('FAILURE')
+  }
+}
+}
+ def sendSlackNotification(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+  def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary, channel: 'walmart')
+}
