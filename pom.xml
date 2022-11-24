@@ -99,13 +99,13 @@
 	    <repository>
 	      <id>nexus</id>
 	      <name>kiranbelchada Releases Nexus Repository</name>
-	      <url>http://3.109.154.68:7899/kiranbelchada/repository/walmart-releases/</url>
+	      <url>http://13.126.30.105:8081/repository/walmart-release/</url>
 	    </repository>
 	    
 	    <snapshotRepository>
 	      <id>nexus</id>
 	      <name>kiranbelchada Snapshot Nexus Repository </name>
-	      <url>http://3.109.154.68:7899/kiranbelchada/repository/walmart-snapshot/</url>
+	      <url>http://13.126.30.105:8081/repository/walmart-snapshot/</url>
 	    </snapshotRepository>
 	    
 	</distributionManagement>
