@@ -52,6 +52,7 @@ pipeline{
   sendSlackNotification('FAILURE')
   }
 }
+}
  def sendSlackNotification(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESSFUL'
@@ -77,5 +78,4 @@ pipeline{
 
   // Send notifications
   slackSend (color: colorCode, message: summary, channel: 'walmart')
-}
 }
