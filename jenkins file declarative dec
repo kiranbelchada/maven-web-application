@@ -1,0 +1,81 @@
+pipeline{
+    agent any
+    tools{
+        maven "maven 3.8.5"
+    }
+    triggers {
+    pollSCM '* * * * *'
+    }
+    options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+    timestamps()
+    }
+    stages{
+       /* stage ('crateDir'){
+            steps{
+                sh "mkdir /tmp/kiran"
+            }
+        }*/
+        stage ('CheckoutCode'){
+            steps{
+                git branch: 'development', credentialsId: '18276788-3f80-4e18-9f12-083a8c8bb6ab', url: 'https://github.com/kiranbelchada/maven-web-application.git'
+            }
+        }
+        stage ('BuildPackage'){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage ('ExecuteSonarQubeReport'){
+            steps{
+                sh "mvn sonar:sonar"
+            }
+        }
+        stage ('UploadArtifactsIntoNexus'){
+            steps{
+                sh "mvn deploy"
+            }
+        }
+        stage ('DeployAppIntoTomcat'){
+            steps{
+                sshagent(['e04fb996-bbca-47d1-b8fd-d8f96e03f240']){
+                sh "scp -o strictHostKeyChecking=no target/maven-web-application.war ec2-user@65.1.95.245:/opt/tomcat9/webapps"
+}
+            }
+        }
+    }
+ post{
+ success {
+  sendSlackNotification('SUCCESSFUL')
+  }
+  failure {
+  sendSlackNotification('FAILURE')
+  }
+}
+ def sendSlackNotification(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+  def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary, channel: 'walmart')
+}
+}
