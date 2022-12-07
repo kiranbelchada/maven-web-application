@@ -26,7 +26,7 @@ pipeline{
                 sh "mvn clean package"
             }
         }
-        stage ('ExecuteSonarQubeReport'){
+        /*stage ('ExecuteSonarQubeReport'){
             steps{
                 sh "mvn sonar:sonar"
             }
@@ -42,7 +42,7 @@ pipeline{
                 sh "scp -o strictHostKeyChecking=no target/maven-web-application.war ec2-user@65.1.95.245:/opt/tomcat9/webapps"
 }
             }
-        }
+        }*/
     }
  post{
  success {
